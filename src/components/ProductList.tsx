@@ -19,7 +19,7 @@ const ProductList: React.FC<ProductProps> = ({ products, onAddToWishlist, onRemo
     margin: '10px', 
     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
     overflow: 'hidden', 
-    width: 'calc(33% - 20px)', 
+    width: '100%', 
     display: 'inline-block',
   };
 
@@ -42,6 +42,10 @@ const ProductList: React.FC<ProductProps> = ({ products, onAddToWishlist, onRemo
     fontWeight: 'bold',
   };
 
+  const marginContent: React.CSSProperties = {
+    margin: '20px'
+  }
+
   return (
     <div style={{ padding: '10px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
       {products.length > 0 ? (
@@ -51,10 +55,11 @@ const ProductList: React.FC<ProductProps> = ({ products, onAddToWishlist, onRemo
           return (
             <IonCard key={product.id} style={cardStyle}>
               <IonImg src={imageUrl} alt={product.title} style={imageStyle} />
-              <IonCardHeader>
-                <IonCardTitle style={titleStyle}>{product.title}</IonCardTitle>
-              </IonCardHeader>
-              <IonCardContent>
+              <div style={marginContent}>
+              <IonCardHeader style={titleStyle} >
+                <IonCardTitle>{product.title}</IonCardTitle>
+              </IonCardHeader  >
+              <IonCardContent >
                 <IonText color="medium" style={{ marginBottom: '10px', display: 'block' }}>
                   {product.description}
                 </IonText>
@@ -74,6 +79,8 @@ const ProductList: React.FC<ProductProps> = ({ products, onAddToWishlist, onRemo
                   </IonButton>
                 )}
               </IonCardContent>
+              </div>
+
             </IonCard>
           );
         })
