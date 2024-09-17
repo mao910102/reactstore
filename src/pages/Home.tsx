@@ -1,21 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { fetchProducts } from '../services/productService';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage } from '@ionic/react';
-import ProductList from '../components/ProductList';
-import { Product } from '../interface/Product';
+import React, { useEffect, useState } from "react";
+import { fetchProducts } from "../services/productService";
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonPage,
+  IonContent,
+  IonButton,
+  IonText,
+} from "@ionic/react";
+import ProductList from "../components/ProductList";
+import { Product } from "../interface/Product";
+import AppHeader from "../components/Header";
 
 const Home: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [wishlist, setWishlist] = useState<number[]>([]);
+  const [view, setView] = useState<"home" | "wishlist">("home"); 
 
   useEffect(() => {
     const loadProducts = async () => {
       try {
         const data = await fetchProducts();
-        console.log('Productos cargados:', data); // Verifica aquí
+        console.log("Productos cargados:", data);
         setProducts(data);
       } catch (error) {
-        console.error('Error al cargar los productos:', error);
+        console.error("Error al cargar los productos:", error);
       }
     };
 
@@ -23,27 +33,75 @@ const Home: React.FC = () => {
   }, []);
 
   const handleAddToWishlist = (id: number) => {
-    setWishlist((prevWishlist) => [...prevWishlist, id]);
+    setWishlist((prevWishlist) => {
+      const newWishlist = [...prevWishlist, id];
+      localStorage.setItem("wishlist", JSON.stringify(newWishlist)); // Persistir en localStorage
+      return newWishlist;
+    });
+  };
+
+  const handleRemoveFromWishlist = (id: number) => {
+    setWishlist((prevWishlist) => {
+      const newWishlist = prevWishlist.filter((itemId) => itemId !== id);
+      localStorage.setItem("wishlist", JSON.stringify(newWishlist)); // Persistir en localStorage
+      return newWishlist;
+    });
+  };
+
+  // Cargar wishlist desde localStorage
+  useEffect(() => {
+    const savedWishlist = localStorage.getItem("wishlist");
+    if (savedWishlist) {
+      setWishlist(JSON.parse(savedWishlist));
+    }
+  }, []);
+
+  // Alternar vista
+  const handleViewChange = (newView: "home" | "wishlist") => {
+    setView(newView);
   };
 
   return (
     <IonPage>
+      <AppHeader />
       <IonHeader>
-        <IonToolbar color="primary">
-          <IonTitle>App Mauro</IonTitle>
+        <IonToolbar>
+          <IonTitle
+            style={{ margin: "12px", fontSize: "20px", fontWeight: "bold" }}
+          >
+            Product List
+          </IonTitle>
         </IonToolbar>
       </IonHeader>
-{/*       <h1 style={{ textAlign: 'center', marginTop: '20px' }}>Productos </h1>
-      <pre style={{ padding: '10px', backgroundColor: '#f4f4f4', borderRadius: '5px', textAlign: 'left' }}>
-          {JSON.stringify(products, null, 2)}
-        </pre> */}
-      <IonContent>
-        <h1 style={{ textAlign: 'center', marginTop: '20px' }}>Productos</h1>
-        <ProductList products={products} onAddToWishlist={handleAddToWishlist} />
-      </IonContent>
+      <div>
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <IonButton
+            onClick={() => handleViewChange("home")}
+            style={{ marginRight: "10px" }}
+          >
+            Show Products
+          </IonButton>
+          <IonButton onClick={() => handleViewChange("wishlist")}>
+            Show Wishlist
+          </IonButton>
+        </div>
+        {view === "home" && (
+          <ProductList
+            products={products}
+            onAddToWishlist={handleAddToWishlist}
+          />
+        )}
+        {view === "wishlist" && (
+          <ProductList
+            products={products.filter((product) =>
+              wishlist.includes(product.id)
+            )}
+            onRemoveFromWishlist={handleRemoveFromWishlist}
+          />
+        )}
+      </div>
     </IonPage>
   );
 };
-
 
 export default Home;

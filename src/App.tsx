@@ -11,16 +11,6 @@ const App: React.FC = () => (
     <Route path="/home" component={Home} exact />
     <Route path="/wishlist" component={Wishlist} exact />
     <Redirect exact from="/" to="/home" />
-    <IonTabBar slot="bottom">
-      <IonTabButton tab="home" href="/home">
-        <IonIcon icon={home} />
-        <IonLabel>Home</IonLabel>
-      </IonTabButton>
-      <IonTabButton tab="wishlist" href="/wishlist">
-        <IonIcon icon={heart} />
-        <IonLabel>Wishlist</IonLabel>
-      </IonTabButton>
-    </IonTabBar>
   </IonReactRouter>
 );
 

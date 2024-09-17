@@ -1,28 +1,62 @@
 import React from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
-import ProductList from '../components/ProductList';
+import { Product } from '../interface/Product';
 
-const Wishlist: React.FC = () => {
-  const wishlist = useSelector((state: RootState) => state.products.wishlist);
-  const products = useSelector((state: RootState) =>
-    state.products.products.filter(product => wishlist.includes(product.id))
-  );
+interface ProductProps {
+  products: Product[];
+  onAddToWishlist?: (id: number) => void;
+  onRemoveFromWishlist?: (id: number) => void;
+}
+
+const ProductList: React.FC<ProductProps> = ({ products, onAddToWishlist, onRemoveFromWishlist }) => {
+  const containerStyle: React.CSSProperties = {
+    padding: '10px',
+    border: '1px solid #ddd',
+    borderRadius: '5px',
+    marginBottom: '10px',
+    textAlign: 'center',
+  };
+
+  const buttonStyle: React.CSSProperties = {
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    padding: '5px 10px',
+    cursor: 'pointer',
+  };
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar color="primary">
-          <IonTitle>Wishlist</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent>
-        <h1 style={{ textAlign: 'center', marginTop: '20px' }}>My Wishlist</h1>
-        <ProductList products={products} onAddToWishlist={() => {}} />
-      </IonContent>
-    </IonPage>
+    <div style={{ padding: '10px' }}>
+      {products.length > 0 ? (
+        products.map((product) => (
+          <div key={product.id} style={containerStyle}>
+            <h3>{product.title}</h3>
+            <p>Price: ${product.price.toFixed(2)}</p>
+            {onAddToWishlist && !onRemoveFromWishlist && (
+              <button
+                onClick={() => onAddToWishlist(product.id)}
+                style={buttonStyle}
+                aria-label={`Add ${product.title} to wishlist`}
+              >
+                Add to Wishlist
+              </button>
+            )}
+            {onRemoveFromWishlist && (
+              <button
+                onClick={() => onRemoveFromWishlist(product.id)}
+                style={buttonStyle}
+                aria-label={`Remove ${product.title} from wishlist`}
+              >
+                Remove from Wishlist
+              </button>
+            )}
+          </div>
+        ))
+      ) : (
+        <p style={{ textAlign: 'center' }}>No products available.</p>
+      )}
+    </div>
   );
 };
 
-export default Wishlist;
+export default ProductList;

@@ -2,13 +2,16 @@ export interface Product {
   id: number;
   title: string;
   price: number;
-  description?: string; // Opcional si no lo usas
-  images?: string[]; // Opcional si no lo usas
-  category?: {
+  description: string;
+  images: string[];  // Array de URLs de imágenes
+  creationAt: string;
+  updatedAt: string;
+  category: {
     id: number;
     name: string;
-    image?: string; // Opcional si no lo usas
+    image: string;
   };
-  creationAt?: string; // Opcional si no lo usas
-  updatedAt?: string; // Opcional si no lo usas
 }
+
+
+
